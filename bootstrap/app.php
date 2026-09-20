@@ -20,7 +20,18 @@ $app = new Illuminate\Foundation\Application(
 | Bind Storage Path For Vercel Serverless
 |--------------------------------------------------------------------------
 */
-if (isset($_ENV['VERCEL']) || isset($_SERVER['VERCEL'])) {
+$customStorage = getenv('APP_STORAGE') ?: ($_ENV['APP_STORAGE'] ?? ($_SERVER['APP_STORAGE'] ?? null));
+if ($customStorage) {
+    $app->useStoragePath($customStorage);
+} elseif (
+    getenv('VERCEL') ||
+    isset($_ENV['VERCEL']) ||
+    isset($_SERVER['VERCEL']) ||
+    getenv('NOW_REGION') ||
+    getenv('AWS_LAMBDA_FUNCTION_NAME') ||
+    is_dir('/tmp/storage') ||
+    !is_writable($app->storagePath())
+) {
     $app->useStoragePath('/tmp/storage');
 }
 
