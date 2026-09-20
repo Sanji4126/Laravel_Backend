@@ -56,6 +56,7 @@ $driverDefaults = [
     'CACHE_DRIVER' => 'array',
     'SESSION_DRIVER' => 'cookie',
     'LOG_CHANNEL' => 'stderr',
+    'AWS_DEFAULT_REGION' => 'ap-south-1',
 ];
 
 foreach ($driverDefaults as $key => $val) {
