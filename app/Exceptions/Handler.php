@@ -31,6 +31,17 @@ class Handler extends ExceptionHandler
             }
         });
 
+        $this->renderable(function (\Throwable $e, $request) {
+            if ($request->is('api/*') || $request->expectsJson() || $request->has('debug')) {
+                return response()->json([
+                    'error' => get_class($e),
+                    'message' => $e->getMessage(),
+                    'file' => $e->getFile(),
+                    'line' => $e->getLine(),
+                ], 500);
+            }
+        });
+
         $this->reportable(function (Throwable $e) {
             //
         });
