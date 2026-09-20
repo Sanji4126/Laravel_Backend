@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Products;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Product;
+use Illuminate\Support\Facades\Storage;
 use Exception;
 
 class ProductController extends Controller
@@ -28,11 +29,9 @@ class ProductController extends Controller
                 'brand_id' => 'required|exists:brands,brand_id',
             ]);
             
-            if($request->hasFile('image')){
-                $image = $request->file('image');
-                $imageName = time() . '.' . $image->getClientOriginalExtension();
-                $image->move(('images'), $imageName);
-                $data['image'] =url('images/'.$imageName);
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('products', 's3');
+                $data['image'] = Storage::disk('s3')->url($path);
             }
             $product = Product::create([
                 'pro_name' => $data['pro_name'],
@@ -66,12 +65,10 @@ class ProductController extends Controller
             'brand_id' => 'required|exists:brands,brand_id',
         ]);
         $product=Product::findOrFail($id);
-        if($request->hasFile('image')){
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(('images'), $imageName);
-            $data['image'] =url('images/'.$imageName);
-        }else{
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('products', 's3');
+            $data['image'] = Storage::disk('s3')->url($path);
+        } else {
             $data['image'] = $product->image;
         }
         if($product){
