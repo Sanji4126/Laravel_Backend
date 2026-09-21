@@ -1,1 +1,0 @@
-<?php require "vendor/autoload.php"; $app = require_once "bootstrap/app.php"; $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class); $kernel->bootstrap(); $products = App\Models\Product::all(); foreach($products as $p) { if(strpos($p->image, "| ") === 0) { $p->image = substr($p->image, 2); $p->save(); echo "Fixed: " . $p->product_id . "\n"; } }
