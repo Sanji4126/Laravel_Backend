@@ -1,0 +1,1 @@
+<?php require "vendor/autoload.php"; $app = require_once "bootstrap/app.php"; $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class); $kernel->bootstrap(); $file = Illuminate\Http\UploadedFile::fake()->image("test.jpg"); $disk = "s3"; $path = $file->store("products", $disk); echo json_encode(Illuminate\Support\Facades\Storage::disk($disk)->url($path));

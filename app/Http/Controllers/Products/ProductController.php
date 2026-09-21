@@ -15,15 +15,13 @@ class ProductController extends Controller
 {
     private function uploadProductImage($file): string
     {
-        // Try S3 first if configured, else public disk
         $disk = config('filesystems.default') === 's3' || !empty(config('filesystems.disks.s3.key')) ? 's3' : 'public';
         try {
             $path = $file->store('products', $disk);
             return Storage::disk($disk)->url($path);
         } catch (\Throwable $e) {
-            Log::warning('Primary image upload failed (' . $disk . '), attempting public fallback: ' . $e->getMessage());
-            $path = $file->store('products', 'public');
-            return Storage::disk('public')->url($path);
+            Log::error('Image upload failed (' . $disk . '): ' . $e->getMessage());
+            throw new Exception('Failed to upload image. Please check your storage configuration.');
         }
     }
 
